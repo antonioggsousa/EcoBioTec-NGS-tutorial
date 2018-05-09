@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+				<h2><a id="NextGeneration_Sequencing_0"></a>Next-Generation Sequencing</h2>
+				<h5><a id="Antnio_Sousahttpsantonioggsousagithubio_1"></a><a href="https://antonioggsousa.github.io">António Sousa</a></h5>
+				</section>
+				<section>
+				<h4><a id="NGS__technologies_slide_1_3"></a>NGS - technologies</h4>
+				<p align="left"><font size="6">NGS relies on massive parallel sequencing of thousands to millions of clonal clusters (aka polonies=polymerase colonies)</p>
+				<p align="left">Sequencing-by-synthesis platforms:</font></p>
+				<ul><font size="6">
+				<li>454 Roche<sup><a href="#fn1">1</a></sup></li>
+				<li>Ion Torrent<sup><a href="#fn1">1</a></sup></li>
+				<li>Illumina<sup><a href="#fn2">2</a></sup></li>
+				</font></ul>
+				<p>                                            </p>
+				<p>                                            </p>
+				<p>                                            </p>
+				<p align="left"><font size="3">
+				<h4 id="single-nucleotide-addition"><a name="fn1">1</a>: single-nucleotide addition</h4>
+				<h4 id="cyclic-reversible-termination"><a name="fn2">2</a>: cyclic reversible termination</h4>
+				</font></p>
+				</section>
+				<section>
+				<h4><a id="Illumina_Miseq_slide2_17"></a>Illumina Miseq</h4>
+				<p><img src="http://www.biofidal-lab.com/site/images/normal/NextGen-Sequencing-Whole-Genome-Sequencing56b9ea45bd182.png" style="width: 70%; height: 70%" alt="Illumina"></p>
+				</section>
+				<section>
+					<h4 id="illumina---sbs">Illumina - SBS</h4>
+					<p><a href="https://www.youtube.com/watch?v=fCd6B5HRaZ8"><img src="http://www.lindinglab.org/external-files/images/HighRes_LOGO_CMYK_new.png" style="width: 30%; height: 30%" alt="IMAGE ALT TEXT HERE" /></a></p>
+				</section>
+				<section>
+				<h2 id="bioinformatic---glossary">Bioinformatic - glossary</h2>
+				</section>
+				<section><h4 id="fastq">FASTQ</h4>
+					<p align="left">Text plain file with fasta DNA sequences and associated Phred quality scores.</p>
+					<p align="left">Each sequence contains 4 lines:</p>
+					<p align="left"><font size="4">
+					<ul>
+					<li>1<sup>st</sup> fastq header that starts with a '@' character;</li>
+					<li>2<sup>nd</sup> fasta DNA sequence;</li>
+					<li>3<sup>rd</sup> '+' sign;</li>
+					<li>4<sup>th</sup> quality scores associated with each nucleotide in the fasta sequence.</li>
+					</ul></font></p></section>
+				<section>
+					<h4 id="quality-phred-scores">Quality (Phred) scores</h4>
+					<p align="left">Phred or Q scores is a metric to estimate the probability of a nucleotide base had been incorrectly introduced, i.e., represent an error.</p>
+					<p align="left">Formula:</p>
+					<pre><code>P = 10 – Q/10, where P represents the probaility of the base with an associated Q score represent an error</code></pre>
+					<p align="left">Therefore, from the above equation it can be inferred the equation below:</p>
+					<pre><code>Q = –10 log10(P)</code></pre>
+				</section>
+				<section>
+					<h4 id="quality-phred-scores">Quality (Phred) scores</h4>
+					<p align="left">Phred or Q scores is a metric to estimate the error probability for each base-call.</p>
+					<p align="left">Formula:</p>
+					<pre><code>P = 10 – Q/10, where P represents the probaility of the base with an associated Q score represent an error</code></pre>
+					<p align="left">Therefore, from the above equation it can be inferred the equation below:</p>
+					<pre><code>Q = –10 log10(P)</code></pre>
+				</section>
+				<section>
+					<h4 id="how-are-q-scores-estimated">How are Q scores estimated?</h4>
+					<p align="left">During base-calling, i.e., during the assignment of each base, the Q scores are estimated using a phred-like algorithm<sup><a href="#fn3">1</a></sup>, which is based on:</p>
+					<ol style="list-style-type: decimal">
+					<li>the emission wave-length</li>
+					<li>the signal intensity</li>
+					</ol>						
+					<p align="left"><font size="4"></font><a name="fn3">1</a>: Ewing B, Hillier L, Wendl MC, Green P. (1998): Base-calling of automated sequencer traces using phred. I. Accuracy assessment. <em>Genome Res</em>. 8(3):175-185</font></p>
+				</section>
+				<section>
+				<h4 id="ascii-characters">ASCII characters</h4>
+				<p align="left"><font size=6><em>American Standard Code for Information Interchange</em></font></p>
+				<div class="figure">
+				<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/ASCII-Table-wide.svg/1280px-ASCII-Table-wide.svg.png" style="width: 70%; height: 70%" />
+				</div>
+				</section>
+				<section>
+				<h4 id="truncate">Truncate</h4>
+				<p>                                                 </p>
+				<p>                                                 </p>
+				<p align="left">Trim the length of sequences at 3'-end</p>
+
+				</section>
+				
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

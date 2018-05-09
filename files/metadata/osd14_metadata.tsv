@@ -1,0 +1,5 @@
+#SampleID	BarcodeSequence	LinkerPrimerSequence	Description
+#q2:types	categorical	categorical	categorical
+ERR867678			OSD73_2014-06-21_1m_NPL022
+ERR867675			OSD74_2014-06-21_1m_NPL022
+ERR867927			OSD111_2014-06-21_0m_NPL022
