@@ -5,7 +5,7 @@ given by [**António Sousa**](https://antonioggsousa.github.io)
 
 ## Introduction
 
-First of all you need to understand the data before start. Several considerations should be taken into account before the data analysis begin depending on the sequencing technology, library preparation/chemistry, and amplicon region chosen. This tutorial has the propose to preprocess/filter, assign taxonomy, and explore diversity 
+First of all you need to understand the data before start. Several considerations should be taken into account before the data analysis begin depending on the sequencing technology, library preparation/chemistry, and amplicon region chosen. This tutorial has the purpose to preprocess/filter, assign taxonomy, and explore diversity 
 patterns of 16S rRNA amplicon sequencing data from Illumina MiSeq. To this end, we will carry out this tutorial with few samples (n=3) from the large campaign of [Ocean Sampling Day 2014](https://www.microb3.eu/events/workshops/ocean-sampling-day-2014.html) (henceforward **OSD14**). 
 
 Processing sequence reads into comprehensive biological information consists in decreasing the level of complexity 
@@ -280,7 +280,7 @@ Open each **fastqc** *html* report created for each file to have a look into the
 Run the **DADA2** algorithm/pipeline: 
 
 
-    qiime dada2 denoise-paired --i-demultiplexed-seqs demux-paired-end_OSD14.qza --p-trunc-len-f 250 --p-trunc-len-r 250 --p-n-threads 4 --o-representative-sequences rep-seqs-dada2_OSD14.qza --o-table table-dada2_OSD14.qza --output-dir dada2-dmx-pe_OSD14
+    qiime dada2 denoise-paired --i-demultiplexed-seqs demux-paired-end_OSD14.qza --p-trunc-len-f 225 --p-trunc-len-r 225 --p-n-reads-learn 30000 --p-n-threads 4 --o-representative-sequences rep-seqs-dada2_OSD14.qza --o-table table-dada2_OSD14.qza --output-dir dada2-dmx-pe_OSD14
 
 <br>
 
@@ -305,88 +305,129 @@ The results produced above can be summarized and vizualized using the following 
 
 We already have the **ASV table** (with the frequency of occurrence of each *ASV* sequence) as well as **representative sequences** (for each *ASV*). 
 
-Now, we can use a trained classifier (not recommend) or train the classifier 
+Now, we will classify the **ASVs representative sequences** using the **Naive Bayes classifier**. As any other classifier, the accuracy of **Naive Bayes classifier** depends on training data, i.e., the 16S rRNA gene database. It has been proved that training only the hypervariable region targeted by the primers used in the study in question improves the accuracy of **Naive Bayes classifier**. 
 
-Get the greengenes database:
+For the purpose of this tutorial we will not train the classifier ([*see how to train the classifier!*](https://docs.qiime2.org/2018.4/tutorials/feature-classifier/)), but instead we will used a pretrained classifier (*although not totally recommend!*) - **Greengenes 13_8 99% OTUs full-length sequences**.   
 
-    wget -O "gg-13-8-99-515-806-nb-classifier.qza" "https://data.qiime2.org/2018.2/common/gg-13-8-99-515-806-nb-classifier.qza"
+First, download the Greengenes database and check their integrity (with **MD5 checksum**):
 
-Classify your ASVs:
+    wget -O "gg-13-8-99-classifier.qza" "https://data.qiime2.org/2018.4/common/gg-13-8-99-nb-classifier.qza"
 
-    qiime feature-classifier classify-sklearn --i-classifier gg-13-8-99-515-806-nb-classifier.qza --i-reads rep-seqs-dada2_OSD14.qza --o-classification taxonomy-rep-seqs-dada2_OSD14.qza
+    md5 gg-13-8-99-classifier.qza
 
-Tabulate:
+If the result of **MD5 checksum** is the same as *MD5: bb72a9e3f1a4c810dd50bceef3508105*, it means that the database was properly downloaded (*in our case should give this: MD5 (gg-13-8-99-classifier.qza) = bb72a9e3f1a4c810dd50bceef3508105*).
+
+**Note:** You should keep in mind that **Greengenes** is **not updated** since **May, 2013**. 
+
+Then, classify the **ASVs representative sequences** with **Naives Bayes classifier**:
+
+    qiime feature-classifier classify-sklearn --i-classifier gg-13-8-99-classifier.qza --i-reads rep-seqs-dada2_OSD14.qza --o-classification taxonomy-rep-seqs-dada2_OSD14.qza
+
+Finally, get your **ASV table** with **taxonomy**:
 
     qiime metadata tabulate --m-input-file taxonomy-rep-seqs-dada2_OSD14.qza --o-visualization taxonomy-rep-seqs-dada2_OSD14.qzv 
 
     qiime tools view taxonomy-rep-seqs-dada2_OSD14.qzv
 
 
-Barplot:
+Get the prokaryotic profile (*barplot it!*):
 
     qiime taxa barplot --i-table table-dada2_OSD14.qza --i-taxonomy taxonomy-rep-seqs-dada2_OSD14.qza --m-metadata-file metadata/osd14_metadata.tsv --o-visualization taxa-bar-plots_OSD14.qzv
 
     qiime tools view taxa-bar-plots_OSD14.qzv
 
+The profile at **phylum level** should look like this:
 
-![taxa bar plot](plots/level-6-bars.svg)
-![legend bar plot](plots/level-6-legend.svg)
+![taxa bar plot](plots/barplot_taxa.png)
 
-#### Diversity Analyses
-#### Alpha and Beta Diversity
 
-Several diversity metrics are based on phylogenetic methods requiring a phylogeny. Therefore, for that propose we will do a maximum-likelihood tree (ML).
+### Alpha and beta Diversity
+#### Phylogenetic tree
 
-First, you need to perform a multiple sequence alignment (MSA) with MAFFT:
+Several diversity metrics are based on phylogenetic methods requiring a phylogenetic tree. Therefore, for that purpose we will do a maximum-likelihood tree (ML).
+
+First, you need to perform a multiple sequence alignment (MSA) with **MAFFT**:
 
     qiime alignment mafft --i-sequences rep-seqs-dada2_OSD14.qza --o-alignment mafft-rep-seqs-dada2_OSD14.qza
 
-Eliminate highly variable positions, to avoid overestimate distances:
+Then, eliminate the highly variable positions, to avoid overestimate distances:
 
     qiime alignment mask --i-alignment mafft-rep-seqs-dada2_OSD14.qza --o-masked-alignment masked-msa-rep-seqs-dada2_OSD14.qza
 
-Do a ML tree with FastTree:
+Finaly, build the ML tree with **FastTree**:
 
     qiime phylogeny fasttree --i-alignment masked-msa-rep-seqs-dada2_OSD14.qza --o-tree unroot-ml-tree-masked_OSD14.qza
 
-Root your unrooted tree based on midpoint rooting method:
+Additionally, root your unrooted tree based on midpoint rooting method:
 
     qiime phylogeny midpoint-root --i-tree unroot-ml-tree-masked_OSD14.qza --o-rooted-tree root-ml-tree_OSD14.qza
 
+<br>
 
-#### Core Diversity Analysis
+#### Core diversity analysis
 
-    qiime diversity core-metrics-phylogenetic --i-phylogeny root-ml-tree_OSD14.qza --i-table table-dada2_OSD14.qza --p-sampling-depth 18500 --m-metadata-file metadata/osd14_metadata.tsv --output-dir core-metrics-results
+**QIIME** was built-in on *scripts* that perform several instructions in order to automatize routine tasks. **QIIME2** works in a similar manner but instead of *scripts* you have know the *plugins*. The **core diversity analysis** plugin is not an exception and therefore it performs several diversity metrics by default. 
 
+An important consideration of every downstream analysis is the different number of sequences *per* sample that bias any estimation sensitive to sampling. Therefore, there is a comman approach (*not neccessarily the best one!*) to deal with this issue that is called **rarefaction**. **Rarefaction** is the proccess of subsample randomly each sample at even sampling depth (*normally to the sample with the lowest no. of reads!*). 
+
+To have an ideia of which is the most proper no. of sequences to **subsample**, run the next plugin:
+
+    qiime tools view table-dada2_OSD14.qzv
+
+Then, run the **core diversity analysis** plugin choosing the **phylogenetic** pipeline:
+
+    qiime diversity core-metrics-phylogenetic --i-phylogeny root-ml-tree_OSD14.qza --i-table table-dada2_OSD14.qza --p-sampling-depth 20000 --m-metadata-file metadata/osd14_metadata.tsv --output-dir core-metrics-results
+
+<br>
+
+#### Beta diversity
 ##### Unweighted UniFrac
+
+**Unweighted UniFrac** allows to assess how the prokaryotic communities cluster together based on the branches shared between communities. 
+
+Type the next plugin to have a look at **PCoA** built with the **Unweighted UniFrac** metric:
 
     qiime tools view core-metrics-results/unweighted_unifrac_emperor.qzv
 
+It should look like this:
 
-![unweighted unifrac](plots/unweighted_unifrac.png)
+<img src="plots/unweighted_unifrac.png" alt="unweight_unifrac" style="width: 700px;"/>
 
 
 ##### Weighted UniFrac
 
+On the other hand, **Weighted UniFrac** allows to assess how the prokaryotic communities cluster together based on the weighted (*abundance of ASVs!*) branches shared between communities. 
+
+Type the next plugin to have a look at **PCoA** built with the **Weighted UniFrac** metric:
+
     qiime tools view core-metrics-results/weighted_unifrac_emperor.qzv
 
+It should look like this:
 
-![weighted unifrac](plots/weighted_unifrac.png)
+<img src="plots/weighted_unifrac.png" alt="weight_unifrac" style="width: 700px;"/>
 
+### Alpha diversity
+##### Rarefaction
 
-##### Alpha rarefaction
+**Rarefaction** is also used to assess if the *sequencing effort* was enough to catch all the diversity present within each sample. 
 
-    qiime diversity alpha-rarefaction --i-table table-dada2_OSD14.qza --i-phylogeny root-ml-tree_OSD14.qza --p-max-depth 18500 --m-metadata-file metadata/osd14_metadata.tsv --o-visualization alpha-rarefaction_OSD14.qzv
+Run the following to see the rarefaction plots: 
+
+    qiime diversity alpha-rarefaction --i-table table-dada2_OSD14.qza --i-phylogeny root-ml-tree_OSD14.qza --p-max-depth 20000 --m-metadata-file metadata/osd14_metadata.tsv --o-visualization alpha-rarefaction_OSD14.qzv
 
     qiime tools view alpha-rarefaction_OSD14.qzv
 
-![alpha rarefaction](plots/rarefaction.png)
+
+The **rarefaction curves** should look like this:
+
+<img src="plots/rarefaction.png" alt="weight_unifrac" style="width: 700px;"/>
+
+The curves of observed no. of ASVs *per* sample seem very flatted what is an indication of a enough **sequencing effort** to catch the diversity of these communities. 
 
 <br>
 <br>
 <br>
 
-<<<<<<< HEAD
 
 ### Metagenomic prediction based on 16S profiles
 #### PICRUSt
@@ -409,8 +450,7 @@ Finalize this tutorial with a simple barplot with the predictions of functional 
 
 
 
-=======
->>>>>>> parent of 75b381b... update
+
 <br>
 <br>
 <br>
