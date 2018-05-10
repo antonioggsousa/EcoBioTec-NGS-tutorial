@@ -7,6 +7,8 @@ echo
 echo 'Starting QIIME2 tutorial!'
 echo
 
+source activate qiime2-2018.4
+
 SECONDS=0
 
 qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path source_info.csv --source-format PairedEndFastqManifestPhred33 --output-path demux-paired-end_OSD14.qza
@@ -155,7 +157,32 @@ echo
 SECONDS=0
 
 qiime vsearch cluster-features-closed-reference --i-table drpl-tbl_OSD14.qza --i-sequences drpl-seqs.qza --i-reference-sequences 97_otus-GG.qza --p-perc-identity 0.97 --o-clustered-table tbl-cr-97_OSD14.qza --o-clustered-sequences rep-seqs-cr-97_OSD14.qza --o-unmatched-sequences unmatched-cr-97_OSD14.qza
+qiime tools export tbl-cr-97_OSD14.qza --output-dir .
 
 echo
 echo 'vsearch took '$SECONDS' seconds to cluster OTUs.'
+echo
+
+source deactivate 
+
+echo 
+echo 'Running PICRUSt locally!' 
+echo
+
+SECONDS=0
+
+normalize_by_copy_number.py -i feature-table.biom -o normalized_feature-table.biom
+
+echo
+echo 'PICRUSt took '$SECONDS' seconds to normalize copy numbers.'
+echo
+
+SECONDS=0
+
+predict_metagenomes.py -f -i normalized_feature-table.biom -o kegg_metagenome_predictions.tab
+
+echo
+echo 'PICRUSt took '$SECONDS' seconds to predict metagenomic content.'
+echo
+echo 'PICRUSt tutorial concluded with success all the steps!'
 echo

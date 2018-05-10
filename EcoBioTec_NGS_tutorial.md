@@ -55,7 +55,7 @@ Theoretical and practical introduction to:
 
     + COG (Cluster of Ortholog Genes) database
 
-    + summarise the results at different levels (using QIIME2) 
+    + summarise the results at different levels (using QIIME) 
 
 
 <br>
@@ -497,19 +497,71 @@ Convert to **json** format.
 
     biom convert -i feature-table.biom -o feature-table.json.biom --to-json
 
-Now, we will use the [**Galaxy**](http://huttenhower.sph.harvard.edu/galaxy/) version of **PICRUSt** (*then follow the instructions!*).
+Now, we will use the [**Galaxy**](http://galaxy.morganlangille.com) version of **PICRUSt** (*then follow the instructions!*).
 
-Finalize this tutorial with a simple barplot with the predictions of functional metagenomic content. 
+Download the **biom table** that resulted from **metagenome prediciton** step. 
+
+Next, convert this **biom table** into **tsv table** with [**biom**](http://biom-format.org/documentation/biom_conversion.html) program:
+
+    biom convert -i Galaxy3-[Predict_Metagenome_on_data_2].biom -o meta-predic_OSD14.tsv --to-tsv
+
+**Note:** for some reason the **KO** associated function does not appear discriminated (*run locally the scripts below to get KOs and the respective functions associated!*).  
+
+Open the **meta-predic_OSD14.tsv** table to have a look into the **KOs** distribution across samples. 
+
+<br>
+
+You can quit **QIIME2** through:
+
+    source deactivate
 
 <br>
 
 ### Scripts
+
+For instance if you prefer to do it locally, run the following scripts to get the same information.
+
+
 #### Normalize 16S rRNA gene copy numbers in PICRUSt
 
     normalize_by_copy_number.py -i feature-table.biom -o normalized_feature-table.biom
 
 #### Predict the metagenome using the normalized OTU table produced before
-    predict_metagenomes.py -f -i normalized_feature-table.biom -o kegg_metagenome_predictions.tab
+    predict_metagenomes.py -f -i normalized_feature-table.biom -o kegg_metagenome_predictions.tab # get a tsv table
+
+    predict_metagenomes.py -i normalized_feature-table.biom -o kegg_metagenome_predictions.biom # get a biom table to use below
+
+
+<br>
+
+Write down the following information (*basically specifying which functional DB did you use - KEGG - and the desired level to plot it -3*) and save it as **qiime_params_l3.txt** file format:
+
+**summarize_taxa:md_identifier "KEGG_Pathways"
+summarize_taxa:absolute_abundance True  
+summarize_taxa:level 3**
+
+    mv ../qiime_params_l3.txt ./
+
+<br>
+
+Finalize this tutorial with a simple barplot with the predictions of functional metagenomic content (*unfortunately I need to use QIIME v.1.9.1!*). 
+
+    macqiime # open it 
+
+#### Categorize at level L3 the metabolic profile using QIIME
+    
+    categorize_by_function.py -i kegg_metagenome_predictions.biom -c "KEGG_Pathways" -l 3 -o kegg_metagenome_predictions_at_level3.biom
+
+#### Plot the metabolism profile at level 3
+
+    summarize_taxa_through_plots.py -i kegg_metagenome_predictions_at_level3.biom -p qiime_params_l3.txt -o plots_at_level3
+
+<br>
+
+The final result should look like this: 
+
+<img src="plots/picrust.png" alt="weight_unifrac" style="width: 700px;"/>
+
 
 <br>
 <br>
