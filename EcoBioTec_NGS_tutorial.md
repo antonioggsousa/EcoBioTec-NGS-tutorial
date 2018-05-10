@@ -455,7 +455,7 @@ The curves of observed no. of ASVs *per* sample seem very flatted what is an ind
 
     cp ../demux-paired-end_OSD14.qza .
 
-    qiime vsearch join-pairs --i-demultiplexed-seqs demux-paired-end_OSD14.qza --o-joined-sequences dmx-jpe_OSD14.qza
+    qiime vsearch join-pairs --i-demultiplexed-seqs demux-paired-end_OSD14.qza --p-allowmergestagger --o-joined-sequences dmx-jpe_OSD14.qza
 
 #### Filter based on Q scores
 
@@ -489,17 +489,27 @@ Then, do the **OTU clustering** at **97%**:
 
 Export the **OTU table**.
 
-    qiime tools export tbl-cr-97_OSD14.qza --output-dir tbl-cr-97_OSD14
+    qiime tools export tbl-cr-97_OSD14.qza --output-dir .
 
 Inside the folder **tbl-cr-97_OSD14** is a **biom** file **feature-table.biom** (*the OTU table in biom format!*).
 
 Convert to **json** format. 
 
-    biom convert -i tbl-cr-97_OSD14/feature-table.biom -o tbl-cr-97_OSD14/feature-table.json.biom --to-json
+    biom convert -i feature-table.biom -o feature-table.json.biom --to-json
 
 Now, we will use the [**Galaxy**](http://huttenhower.sph.harvard.edu/galaxy/) version of **PICRUSt** (*then follow the instructions!*).
 
 Finalize this tutorial with a simple barplot with the predictions of functional metagenomic content. 
+
+<br>
+
+### Scripts
+#### Normalize 16S rRNA gene copy numbers in PICRUSt
+
+    normalize_by_copy_number.py -i feature-table.biom -o normalized_feature-table.biom
+
+#### Predict the metagenome using the normalized OTU table produced before
+    predict_metagenomes.py -f -i normalized_feature-table.biom -o kegg_metagenome_predictions.tab
 
 <br>
 <br>

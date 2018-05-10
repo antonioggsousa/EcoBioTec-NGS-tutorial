@@ -119,7 +119,7 @@ cp ../demux-paired-end_OSD14.qza .
 
 SECONDS=0
 
-qiime vsearch join-pairs --i-demultiplexed-seqs demux-paired-end_OSD14.qza --o-joined-sequences dmx-jpe_OSD14.qza
+qiime vsearch join-pairs --i-demultiplexed-seqs demux-paired-end_OSD14.qza --p-allowmergestagger --o-joined-sequences dmx-jpe_OSD14.qza
 
 echo
 echo 'vsearch took '$SECONDS' seconds to join paired-end reads.'
