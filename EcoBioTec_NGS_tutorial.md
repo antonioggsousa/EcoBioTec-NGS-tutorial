@@ -1,4 +1,4 @@
-# EcoBioTec - QIIME2 tutorial
+# EcoBioTec - QIIME2 & PICRUSt tutorials
 given by [**António Sousa**](https://antonioggsousa.github.io)
 
 <br>
@@ -60,7 +60,7 @@ Theoretical and practical introduction to:
 
 <br>
 
-**Note**: In practice, this tutorial should not take more than 10-15 min. running on a computer with 4 cores, and 8 Gb RAM memory.  
+**Note**: In practice, this tutorial should not take more than ≈22 min. (1276 secs.) running on a computer with 4 cores, and 8 Gb RAM memory.  
 
 <br>
 
