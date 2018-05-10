@@ -341,7 +341,7 @@ The profile at **phylum level** should look like this:
 ![taxa bar plot](plots/barplot_taxa.png)
 
 
-### Alpha and beta Diversity
+### Alpha and beta diversity
 #### Phylogenetic tree
 
 Several diversity metrics are based on phylogenetic methods requiring a phylogenetic tree. Therefore, for that purpose we will do a maximum-likelihood tree (ML).
@@ -406,7 +406,9 @@ It should look like this:
 
 <img src="plots/weighted_unifrac.png" alt="weight_unifrac" style="width: 700px;"/>
 
-### Alpha diversity
+<br>
+
+#### Alpha diversity
 ##### Rarefaction
 
 **Rarefaction** is also used to assess if the *sequencing effort* was enough to catch all the diversity present within each sample. 
@@ -422,6 +424,8 @@ The **rarefaction curves** should look like this:
 
 <img src="plots/rarefaction.png" alt="weight_unifrac" style="width: 700px;"/>
 
+<br>
+
 The curves of observed no. of ASVs *per* sample seem very flatted what is an indication of a enough **sequencing effort** to catch the diversity of these communities. 
 
 <br>
@@ -429,27 +433,73 @@ The curves of observed no. of ASVs *per* sample seem very flatted what is an ind
 <br>
 
 
-### Metagenomic prediction based on 16S profiles
-#### PICRUSt
+## Metagenomic prediction based on 16S profiles
+### PICRUSt
 
 [**PICRUSt**](http://picrust.github.io/picrust/) is described in detail in [Langille et al., 2013](https://www.nature.com/articles/nbt.2676). 
 
-First, we will export the **ASV table**.
+<br>
 
-    qiime tools export table-dada2_OSD14.qza --output-dir table-dada2_OSD14
+### Before starting
 
-Inside the folder **table-dada2_OSD14** is a **biom** file **feature-table.biom** (*the ASV table in biom format!*).
+**PICRUSt** requires an **OTU table** (*an not an ASV table!*) built with the **closed reference method**. Basically, the **closed reference method** compares each **OTU representative sequence** with the references sequences available in a given database; if the **OTU representative sequence** has high similarity with one reference sequence in the given database, this **OTU** is kept, otherwise it is discarded. Since **PICRUSt** was pretrained with **Greengenes database v.13.5**, the user should use this database as reference in **closed reference method**, or alternatively train the database used during the **closed reference method**.    
+
+<br>
+
+### Closed-reference method: pipeline
+#### Join paired-end reads
+
+    mkdir PICRUSt
+
+    cd PICRUSt
+
+    cp ../demux-paired-end_OSD14.qza .
+
+    qiime vsearch join-pairs --i-demultiplexed-seqs demux-paired-end_OSD14.qza --o-joined-sequences dmx-jpe_OSD14.qza
+
+#### Filter based on Q scores
+
+    qiime quality-filter q-score-joined --i-demux dmx-jpe_OSD14.qza --o-filtered-sequences dmx-jpe-filter_OSD14.qza --o-filter-stats dmx-jpe-filter-stats.qza
+
+#### Dereplicating sequences
+
+    qiime vsearch dereplicate-sequences --i-sequences dmx-jpe-filter_OSD14.qza --o-dereplicated-table drpl-tbl_OSD14.qza --o-dereplicated-sequences drpl-seqs.qza
+
+#### Closed-reference clustering
+
+First download the ***Greengenes database v.13.5***:
+
+    wget ftp://greengenes.microbio.me/greengenes_release/gg_13_5/gg_13_5_otus.tar.gz # download DB
+
+
+    tar -xvzf gg_13_5_otus.tar.gz # uncompress DB
+
+
+    qiime tools import --type 'FeatureData[Sequence]' --input-path gg_13_5_otus/rep_set/97_otus.fasta --output-path 97_otus-GG.qza # import fasta seqs
+
+    qiime tools import --type 'FeatureData[Taxonomy]' --source-format HeaderlessTSVTaxonomyFormat --input-path gg_13_5_otus/taxonomy/97_otu_taxonomy.txt --output-path 97_otu-ref-taxonomy-GG.qza # import taxonomy
+
+<br>
+
+Then, do the **OTU clustering** at **97%**:
+
+    qiime vsearch cluster-features-closed-reference --i-table drpl-tbl_OSD14.qza --i-sequences drpl-seqs.qza --i-reference-sequences 97_otus-GG.qza --p-perc-identity 0.97 --o-clustered-table tbl-cr-97_OSD14.qza --o-clustered-sequences rep-seqs-cr-97_OSD14.qza --o-unmatched-sequences unmatched-cr-97_OSD14.qza
+
+<br>
+
+Export the **OTU table**.
+
+    qiime tools export tbl-cr-97_OSD14.qza --output-dir tbl-cr-97_OSD14
+
+Inside the folder **tbl-cr-97_OSD14** is a **biom** file **feature-table.biom** (*the OTU table in biom format!*).
 
 Convert to **json** format. 
 
-    biom convert -i table-dada2_OSD14/feature-table.biom -o table-dada2_OSD14/feature-table.json.biom --to-json
+    biom convert -i tbl-cr-97_OSD14/feature-table.biom -o tbl-cr-97_OSD14/feature-table.json.biom --to-json
 
 Now, we will use the [**Galaxy**](http://huttenhower.sph.harvard.edu/galaxy/) version of **PICRUSt** (*then follow the instructions!*).
 
 Finalize this tutorial with a simple barplot with the predictions of functional metagenomic content. 
-
-
-
 
 <br>
 <br>
@@ -459,7 +509,7 @@ Finalize this tutorial with a simple barplot with the predictions of functional 
 
 ## Disclaimer 
 
-All the data used herein was made public elsewhere (proper links were provided along the tutorial). This tutorial was based on others publicly available on **QIIME2** official website. The results generated has just the general purpose to give a brief introduction to the analysis of 16S amplicon NGS data with **QIIME2** and functional prediciton with **PICRUSt**. 
+All the data used herein was made public elsewhere (proper links were provided along the tutorial). This tutorial was based on others publicly available on **QIIME2** official website. The results generated have just the general purpose to give a brief introduction to the analysis of 16S amplicon NGS data with **QIIME2** and functional prediciton with **PICRUSt**. 
 
 <br>
 
