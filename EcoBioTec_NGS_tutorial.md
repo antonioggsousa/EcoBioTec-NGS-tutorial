@@ -6,7 +6,7 @@ given by [**António Sousa**](https://antonioggsousa.github.io)
 ## Introduction
 
 First of all you need to understand the data before start. Several considerations should be taken into account before the data analysis begin depending on the sequencing technology, library preparation/chemistry, and amplicon region chosen. This tutorial has the purpose to preprocess/filter, assign taxonomy, and explore diversity 
-patterns of 16S rRNA amplicon sequencing data from Illumina MiSeq. To this end, we will carry out this tutorial with few samples (n=3) from the large campaign of [Ocean Sampling Day 2014](https://www.microb3.eu/events/workshops/ocean-sampling-day-2014.html) (henceforward **OSD14**). 
+patterns of 16S rRNA amplicon sequencing data from Illumina MiSeq with the new version of QIIME - **QIIME2**. In addition, we wil use the 16S taxonomic profiles to predict metagenomic content with **PICRUSt**. To this end, we will carry out this tutorial with few samples (n=3) from the large campaign of [Ocean Sampling Day 2014](https://www.microb3.eu/events/workshops/ocean-sampling-day-2014.html) (henceforward **OSD14**). 
 
 Processing sequence reads into comprehensive biological information consists in decreasing the level of complexity 
 from these large datasets using high performance algorithms integrated in bioinformatics pipelines. 
@@ -75,6 +75,9 @@ the instructions)
 
 + [**PICRUSt**](https://picrust.github.io/picrust/install.html#install) (**optional**)
 
+<br>
+
+Download this repository!
 
 <br>
 
@@ -215,7 +218,7 @@ On the other hand, if you want to export files from '.**qza**' format, do the fo
 ### Demultiplexing sequences
 #### Q scores and no. reads
 
-In this case, you do not need to demultiplex your sequences, but you need to check the quality of your sequences. For that propose, run the following:
+In this case, you do not need to demultiplex your sequences, but you need to check the quality of your sequences. For that purpose, run the following:
 
     qiime demux summarize --i-data demux-paired-end_OSD14.qza --o-visualization demux-paired-end_OSD14.qzv
 
@@ -366,7 +369,7 @@ Additionally, root your unrooted tree based on midpoint rooting method:
 
 #### Core diversity analysis
 
-**QIIME** was built-in on *scripts* that perform several instructions in order to automatize routine tasks. **QIIME2** works in a similar manner but instead of *scripts* you have know the *plugins*. The **core diversity analysis** plugin is not an exception and therefore it performs several diversity metrics by default. 
+**QIIME** was built-in on *scripts* that perform several instructions in order to automatize routine tasks. **QIIME2** works in a similar manner but instead of *scripts* you have now the *plugins*. The **core diversity analysis** plugin is not an exception and therefore it performs several diversity metrics by default. 
 
 An important consideration of every downstream analysis is the different number of sequences *per* sample that bias any estimation sensitive to sampling. Therefore, there is a comman approach (*not neccessarily the best one!*) to deal with this issue that is called **rarefaction**. **Rarefaction** is the proccess of subsample randomly each sample at even sampling depth (*normally to the sample with the lowest no. of reads!*). 
 
@@ -491,9 +494,9 @@ Export the **OTU table**.
 
     qiime tools export tbl-cr-97_OSD14.qza --output-dir .
 
-Inside the folder **tbl-cr-97_OSD14** is a **biom** file **feature-table.biom** (*the OTU table in biom format!*).
+Now you have your table in **biom** format - **feature-table.biom** (*the OTU table in biom format!*).
 
-Convert to **json** format. 
+Convert to **json** format: 
 
     biom convert -i feature-table.biom -o feature-table.json.biom --to-json
 
@@ -536,9 +539,11 @@ For instance if you prefer to do it locally, run the following scripts to get th
 
 Write down the following information (*basically specifying which functional DB did you use - KEGG - and the desired level to plot it -3*) and save it as **qiime_params_l3.txt** file format:
 
-**summarize_taxa:md_identifier "KEGG_Pathways"
-summarize_taxa:absolute_abundance True  
-summarize_taxa:level 3**
+**summarize_taxa:md_identifier "KEGG_Pathways**
+
+**summarize_taxa:absolute_abundance True**
+
+**summarize_taxa:level 3**
 
     mv ../qiime_params_l3.txt ./
 
@@ -564,7 +569,15 @@ The final result should look like this:
 
 
 <br>
+
 <br>
+
+<br>
+
+:metal: Now you're ready to **Rock'N Roll** :metal: :beer: :beer:
+
+
+
 <br>
 <br>
 
