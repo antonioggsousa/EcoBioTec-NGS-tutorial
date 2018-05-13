@@ -580,7 +580,16 @@ The final result should look like this:
 
 <br>
 <br>
+<br>
+<br>
 
+**LAST NOTE:** You should not forget to give credit to the researchers behind every algorithm wrappered in **QIIME2**! To find the proper citation for each of them, type:
+
+    qiime <plugin> --citations
+
+
+<br>
+<br>
 
 ## Disclaimer 
 

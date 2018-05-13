@@ -25,26 +25,27 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-				<h2><a id="NextGeneration_Sequencing_0"></a>Next-Generation Sequencing</h2>
+				<h3><a id="NextGeneration_Sequencing_0"></a>16S amplicon sequencing analysis: an introduction</h3>
+				<br>
 				<h5><a id="Antnio_Sousahttpsantonioggsousagithubio_1"></a><a href="https://antonioggsousa.github.io">António Sousa</a></h5>
 				</section>
 				<section>
 				<h4><a id="NGS__technologies_slide_1_3"></a>NGS - technologies</h4>
 				<p align="left"><font size="6">NGS relies on massive parallel sequencing of thousands to millions of clonal clusters (aka polonies=polymerase colonies)</p>
 				<p align="left">Sequencing-by-synthesis platforms:</font></p>
-				<ul><font size="6">
+				<p align="left"><font size="6">
+				<ul>
 				<li>454 Roche<sup><a href="#fn1">1</a></sup></li>
 				<li>Ion Torrent<sup><a href="#fn1">1</a></sup></li>
 				<li>Illumina<sup><a href="#fn2">2</a></sup></li>
-				</font></ul>
+				</ul></font></p>
 				<p>                                            </p>
 				<p>                                            </p>
 				<p>                                            </p>
 				<p align="left"><font size="3">
 				<h4 id="single-nucleotide-addition"><a name="fn1">1</a>: single-nucleotide addition</h4>
 				<h4 id="cyclic-reversible-termination"><a name="fn2">2</a>: cyclic reversible termination</h4>
-				</font></p>
-				</section>
+				</font></p></section>
 				<section>
 				<h4><a id="Illumina_Miseq_slide2_17"></a>Illumina Miseq</h4>
 				<p><img src="http://www.biofidal-lab.com/site/images/normal/NextGen-Sequencing-Whole-Genome-Sequencing56b9ea45bd182.png" style="width: 70%; height: 70%" alt="Illumina"></p>
@@ -56,10 +57,17 @@
 				<section>
 				<h2 id="bioinformatic---glossary">Bioinformatic - glossary</h2>
 				</section>
+				<section>
+						<h4 id="pipeline">Pipeline</h4>
+						<br>
+						<div class="figure">
+							<img src="figs/pipeline.png" style="width: 80%; height: 80%" />
+						</div>
+				</section>
 				<section><h4 id="fastq">FASTQ</h4>
 					<p align="left">Text plain file with fasta DNA sequences and associated Phred quality scores.</p>
 					<p align="left">Each sequence contains 4 lines:</p>
-					<p align="left"><font size="4">
+					<p align="left"><font size="6">
 					<ul>
 					<li>1<sup>st</sup> fastq header that starts with a '@' character;</li>
 					<li>2<sup>nd</sup> fasta DNA sequence;</li>
@@ -67,16 +75,34 @@
 					<li>4<sup>th</sup> quality scores associated with each nucleotide in the fasta sequence.</li>
 					</ul></font></p></section>
 				<section>
-					<h4 id="quality-phred-scores">Quality (Phred) scores</h4>
-					<p align="left">Phred or Q scores is a metric to estimate the probability of a nucleotide base had been incorrectly introduced, i.e., represent an error.</p>
-					<p align="left">Formula:</p>
-					<pre><code>P = 10 – Q/10, where P represents the probaility of the base with an associated Q score represent an error</code></pre>
-					<p align="left">Therefore, from the above equation it can be inferred the equation below:</p>
-					<pre><code>Q = –10 log10(P)</code></pre>
+					<h4 id="fastq">FASTQ</h4>
+					<p align="left">Example:</p>
+					<body align="left">
+					<pre><code>@HWI-M02024:21:000000000-AKNCM:1:1103:7492:22372 1:N:0:AAGTCGGA 515F-Y906R-jed-1-ICE-515F-Y906R-jed-1-ICE SH-SH NM-NM (515YF)-(926R) NS-NS MM-MM
+TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTAAAAAAGTTGATGGTGAAATCCCAAGGCTCAACCTTGGAACTGCCATCAAAACTTTTTAGCTAGAGTATGTTAGACGTAAGTGGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAACACCAAATGCGAAGGCAACTTACTGGATCATTACTGACTCTGAGGCGCGAAAGCATGGGTAGCGCGGAGGATTAGATACCACC
++
+F,CFFGC:CEFEGGFFCGDGGGF:FCCEGG,<C<E8,:EFGG9CFC9@FGD,,666CEC<EFDFEFE9EF?,CFFAF<F8E,?9?<,,:,,:5,,,:9F@A@<,B=CEEE88,CCDFCFCE<,5EFG,:AFD,@>F,3@=93@>DFF,7=F,7C,,@F:CCC9A,,@C,@8,>;9,@DB>,@:>:BBE>F?B,=:?E>:=F*1>CFFG6,,<6CCCF+4:F++;FGGF*7)8):CDG<**9***0)).))8.).)9==??66??:></code></pre>
+					<p align="left"><font size="5">
+						<ul style="text-align:left; list-style-position:inside;">
+							<li><b>@</b> - each line starts with it</li>
+							<li><b>HWI-M02024</b> - instrument</li>
+							<li><b>21</b>  - run number on instrument</li>
+							<li><b>000000000-AKNCM</b> - flowcell id</li>
+							<li><b>1</b> - lane</li>
+							<li><b>1103</b> - tile</li>
+							<li><b>7492</b> - x coordinate of cluster</li>
+							<li><b>22372</b> - y coordinate of cluster</li>
+							<li><b>1</b> - 1 (single read) or 2 (paired-end)</li>
+							<li><b>N</b> - Y if the read is filtered (did not pass), N otherwise</li>
+							<li><b>0</b> - 0 when none of the control bits are on, otherwise it is an even number</li>
+							<li><b>AAGTCGGA</b> - index sequence</li> 
+							<li><b>515F-Y906R-jed-1-ICE-515F-Y906R-jed-1-ICE</b> - sample number from sample sheet</li>
+					</ul></font></p>
+					</body>
 				</section>
 				<section>
 					<h4 id="quality-phred-scores">Quality (Phred) scores</h4>
-					<p align="left">Phred or Q scores is a metric to estimate the error probability for each base-call.</p>
+					<p align="left">Phred or Q scores is a metric to estimate the error probability for each base-call</p>
 					<p align="left">Formula:</p>
 					<pre><code>P = 10 – Q/10, where P represents the probaility of the base with an associated Q score represent an error</code></pre>
 					<p align="left">Therefore, from the above equation it can be inferred the equation below:</p>
@@ -89,23 +115,108 @@
 					<li>the emission wave-length</li>
 					<li>the signal intensity</li>
 					</ol>						
-					<p align="left"><font size="4"></font><a name="fn3">1</a>: Ewing B, Hillier L, Wendl MC, Green P. (1998): Base-calling of automated sequencer traces using phred. I. Accuracy assessment. <em>Genome Res</em>. 8(3):175-185</font></p>
+					<p align="left"><font size="3"></font><a name="fn3">1</a>: Ewing B, Hillier L, Wendl MC, Green P. (1998): Base-calling of automated sequencer traces using phred. I. Accuracy assessment. <em>Genome Res</em>. 8(3):175-185</font></p>
 				</section>
 				<section>
 				<h4 id="ascii-characters">ASCII characters</h4>
-				<p align="left"><font size=6><em>American Standard Code for Information Interchange</em></font></p>
+				<p align="center"><font size=6><em>American Standard Code for Information Interchange</em></font></p>
 				<div class="figure">
-				<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/ASCII-Table-wide.svg/1280px-ASCII-Table-wide.svg.png" style="width: 70%; height: 70%" />
+				<img src="figs/q_scores_ascii.png" style="width: 70%; height: 70%" />
 				</div>
 				</section>
 				<section>
 				<h4 id="truncate">Truncate</h4>
-				<p>                                                 </p>
-				<p>                                                 </p>
-				<p align="left">Trim the length of sequences at 3'-end</p>
-
+				&emsp;
+				<br>
+				<p align="left">Cut the length of reads at 3'-end</p>
+				<p align="left">E.g., truncate reads at 250 bp means cut-off all the reads at position 250 (reads < 250 bp are discarded)</p>
 				</section>
-				
+				<section>
+					<h4 id="Trim">Trim</h4>
+					&emsp;
+					<br>
+					<p align="left">Cut reads at 5'-end</p>
+					<p align="left">Trim-off adapters and primers at 5'-end</p>
+				</section>
+				<section>
+					<h4 id="trim">Homopolymers</h4>
+					&emsp;
+					<p align="left">Polymer with the same monomer, i.e., nucleotide base (A or T or G or C)</p>
+					<p align="left">E.g., <strong>AAAAAAA</strong> in AGTAGTACCG<strong>AAAAAAA</strong>TACGTACG</p>
+				</section>
+				<section>
+					<h4 id="ambigous_bases">Ambigous bases</h4>
+					&emsp;
+					<br>
+					<div class="figure">
+						<img src="https://patentimages.storage.googleapis.com/WO2013128281A1/imgf000033_0001.png" style="width: 50%; height: 50%" />
+					</div>
+				</section>
+				<section>
+					<h4 id="dereplication">Dereplication</h4>
+					&emsp;
+					<br>
+					<p align="left">It is the proccess of merging equal/unique sequences (100%)</p>
+				</section>
+				<section>
+					<h4 id="chimeras">Chimeras</h4>
+					&emsp;
+					<br>
+					<p align="left">Artificial sequences with multi parent origin produced during PCR amplification</p>
+				</section>
+				<section>
+					<h4 id="cluster">OTUs</h4>
+					&emsp;
+					<br>
+					<p align="left">Operational Taxonomic Sequences</p>
+					<p align="left">OTUs are clusters (based on user-defined threshold, often at 97%) of unique sequences</p>
+				</section>
+				<section>
+					<h3 id="bash---guide">BASH guide</h3>
+					<h4 id="introduction--to">an introduction to Bioinformatics</h4>
+				</section>
+				<section>
+					<h4 id="directory">Directory - UNIX</h4>
+					<p>Absolute vs. Relative Paths</p>
+					<div class="figure">
+						<img src="http://www-uxsup.csx.cam.ac.uk/pub/doc/suse/suse9.0/userguide-9.0/verzeichnisse_baum.png" style="width: 70%; height: 70%" />
+					</div>
+				</section>
+				<section>
+					<h4 id="cd">cd</h4>
+					&emsp;
+					<strong>c</strong>hange <strong>d</strong>irectory
+				</section>
+				<section>
+					<h4 id="mkdir">mkdir</h4>
+					&emsp;
+					<strong>m</strong>ake <strong>d</strong>irectory
+				</section>
+				<section>
+					<h4 id="mv">mv</h4>
+					&emsp;
+					<strong>m</strong>oves/renames files
+				</section>
+				<section>
+					<h4 id="wget">wget</h4>
+					&emsp;
+					<strong>w</strong>eb <strong>g</strong>et
+				</section>
+				<section>
+						<h4 id="cp">cp</h4>
+						&emsp;
+						<strong>c</strong>opy
+					</section>
+				<section>
+					<h4 id="many"></h4>
+					<p>many others...</p>
+				</section>
+				<section>
+					<h4 id="questions"></h4>
+					<div class="figure">
+						<img src="https://rosettastoneweb.files.wordpress.com/2015/10/any-questions.gif" style="width: 70%; height: 70%" />
+					</div>
+				</section>
 			</div>
 		</div>
 
