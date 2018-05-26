@@ -193,7 +193,7 @@ You need to write down the information below and save it as **source_info.csv** 
 |ERR867675 | $PWD/fastq/ERR867675_1.fastq.gz | forward
 |ERR867675 | $PWD/fastq/ERR867675_2.fastq.gz | reverse
 |ERR867927 | $PWD/fastq/ERR867927_1.fastq.gz | forward
-|ERR867927 | $PWD/fastq/ERR867927_2.fastq.gz | forward
+|ERR867927 | $PWD/fastq/ERR867927_2.fastq.gz | reverse
 
 <br>
 
